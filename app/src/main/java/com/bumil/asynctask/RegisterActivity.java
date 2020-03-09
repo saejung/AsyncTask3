@@ -3,6 +3,7 @@ package com.bumil.asynctask;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -52,11 +53,15 @@ public class RegisterActivity extends AppCompatActivity {
                             if(success){
                                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                                 builder.setMessage("회원 등록에 성공했습니다.")
-                                        .setPositiveButton("확인", null)
+                                        .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
+                                                RegisterActivity.this.startActivity(intent);
+                                            }
+                                        })
                                         .create()
                                         .show();
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                RegisterActivity.this.startActivity(intent);
                             }else{
                                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                                 builder.setMessage("회원 등록에 실패했습니다.")

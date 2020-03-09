@@ -4,6 +4,7 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -110,18 +111,20 @@ public class MainActivity extends AppCompatActivity {
                 //페이지에 '*** 님 환영합니다.' 표시
                 //인텐트에 사용자 정의 클래스를 넣어 두번째 액티비티에 보낸다.
 
-                String id = editId.getText().toString(); //아이디 불러오기
+                final String id = editId.getText().toString(); //아이디 불러오기
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
                 builder.setMessage("로그인 성공")
-                        .setNegativeButton("확인", null)
+                        .setNegativeButton("확인", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Intent intent = new Intent(MainActivity.this, SubActivity.class);
+                                intent.putExtra("userId", id);
+                                startActivity(intent);
+                            }
+                        })
                         .create()
                         .show();
-
-                Intent intent = new Intent(MainActivity.this, SubActivity.class);
-                intent.putExtra("userId", id);
-                startActivity(intent);
-
             }else if(returnVal.equals("inCorrectUserInfo")){ //아이디 or 비밀번호가 잘못되었을 경우
                 //id, pw 초기화
                 //'아이디 or 비밀번호 가 잘못되었습니다. 확인 후 다시 입력해주세요.' 문구 다이얼로그로 뜨기
