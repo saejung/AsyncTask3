@@ -62,6 +62,7 @@ public class RegisterActivity extends AppCompatActivity {
                                         })
                                         .create()
                                         .show();
+                                    finish();
                             }else{
                                 AlertDialog.Builder builder = new AlertDialog.Builder(RegisterActivity.this);
                                 builder.setMessage("회원 등록에 실패했습니다.")

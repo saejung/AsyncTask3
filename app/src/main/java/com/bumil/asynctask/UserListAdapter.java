@@ -1,10 +1,19 @@
 package com.bumil.asynctask;
 
+import android.app.Activity;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.Button;
 import android.widget.TextView;
+
+import com.android.volley.DefaultRetryPolicy;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -12,10 +21,12 @@ public class UserListAdapter extends BaseAdapter {
 
     private Context context;
     private List<User> userList;
+    private  Activity parentActivity;
 
-    public UserListAdapter(Context context, List<User> userList){
+    public UserListAdapter(Context context, List<User> userList, Activity parentActivity){
         this.context = context;
         this.userList = userList;
+        this.parentActivity = parentActivity;
     }
 
     @Override
@@ -34,10 +45,10 @@ public class UserListAdapter extends BaseAdapter {
     }
 
     @Override
-    public View getView(int i, View view, ViewGroup viewGroup) {
+    public View getView(final int i, View view, ViewGroup viewGroup) {
         View v = View.inflate(context, R.layout.user, null);
 
-        TextView userID = (TextView) v.findViewById(R.id.userID);
+        final TextView userID = (TextView) v.findViewById(R.id.userID);
         TextView depCodeNm = (TextView) v.findViewById(R.id.depcodeNm);
         TextView userName = (TextView) v.findViewById(R.id.userName);
         TextView regDt = (TextView) v.findViewById(R.id.regDt);
@@ -48,6 +59,33 @@ public class UserListAdapter extends BaseAdapter {
         regDt.setText(userList.get(i).getRegDt());
 
         v.setTag(userList.get(i).getUserID());
+
+        Button deleteButton = (Button) v.findViewById(R.id.deleteButton);
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Response.Listener<String> responseListener = new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        try {
+                            JSONObject jsonResponse = new JSONObject(response);
+                            boolean success = jsonResponse.getBoolean("success");
+                            if(success){
+                                userList.remove(i);
+                                notifyDataSetChanged();
+                            }
+                        }catch (Exception e){
+                           e.printStackTrace();
+                        }
+                    }
+                };
+                DeleteRequest deleteRequest = new DeleteRequest(userID.getText().toString(), responseListener);
+                deleteRequest.setRetryPolicy(new DefaultRetryPolicy(1000000000, 0, DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+                RequestQueue queue = Volley.newRequestQueue(parentActivity);
+                queue.add(deleteRequest);
+            }
+        });
+
         return v;
     }
 }

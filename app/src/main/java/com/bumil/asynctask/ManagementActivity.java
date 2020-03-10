@@ -40,7 +40,7 @@ public class ManagementActivity extends AppCompatActivity {
         userList.add(new User("강세정", "강세정", "강세정", "26"));
         userList.add(new User("이유리", "이유리", "이유리", "15")); 예시 데이터*/
 
-        adapter = new UserListAdapter(getApplicationContext(), userList);
+        adapter = new UserListAdapter(getApplicationContext(), userList, this);
         listView.setAdapter(adapter);
 
         try{
@@ -62,7 +62,9 @@ public class ManagementActivity extends AppCompatActivity {
 
                 regDt = formatDate;
                 User user = new User(userID, depCodeNm, userName, regDt);
-                userList.add(user);
+                if(!userID.equals("admin")){
+                    userList.add(user);
+                }
                 count++;
             }
 
