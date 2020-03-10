@@ -8,6 +8,8 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AlertDialog;
+
 import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -70,9 +72,18 @@ public class UserListAdapter extends BaseAdapter {
                         try {
                             JSONObject jsonResponse = new JSONObject(response);
                             boolean success = jsonResponse.getBoolean("success");
+                            String msg = jsonResponse.getString("msg");
                             if(success){
                                 userList.remove(i);
                                 notifyDataSetChanged();
+                            }else{
+                                if(msg.equals("notFoundUser")){
+                                    AlertDialog.Builder builder = new AlertDialog.Builder(parentActivity);
+                                    builder.setMessage("존재하지않는 사용자 입니다. 확인 후 삭제 해주세요.")
+                                            .setNegativeButton("확인", null)
+                                            .create()
+                                            .show();
+                                }
                             }
                         }catch (Exception e){
                            e.printStackTrace();
